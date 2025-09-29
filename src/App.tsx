@@ -4,13 +4,38 @@ import { CommandCenter } from './components/CommandCenter'
 import { Sidebar } from './components/Sidebar'
 import { AgentWorkspace } from './components/AgentWorkspace'
 import { AstridPanel } from './components/AstridPanel'
-import { Cpu, Brain, Sparkle } from '@phosphor-icons/react'
+import { LandingPage } from './components/LandingPage'
+import { LoadingScreen } from './components/LoadingScreen'
+import { Cpu, Brain, Sparkle, List } from '@phosphor-icons/react'
+import logoImage from '@/assets/images/image.png'
 
 function App() {
+  const [hasVisited, setHasVisited] = useKV('arch1tech-has-visited', 'false')
+  const [isLoading, setIsLoading] = useState(false)
   const [activeView, setActiveView] = useKV('arch1tech-active-view', 'command-center')
   const [astridActive, setAstridActive] = useKV('arch1tech-astrid-active', 'false')
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth < 768)
 
+  const handleGetStarted = () => {
+    setIsLoading(true)
+  }
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false)
+    setHasVisited('true')
+  }
+
+  // Show loading screen during transition
+  if (isLoading) {
+    return <LoadingScreen onComplete={handleLoadingComplete} />
+  }
+
+  // Show landing page for first-time visitors
+  if (hasVisited !== 'true') {
+    return <LandingPage onGetStarted={handleGetStarted} />
+  }
+
+  // Main dashboard for returning users
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Animated background elements */}
@@ -31,60 +56,90 @@ function App() {
         />
 
         {/* Main Content */}
-        <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        <main className={`flex-1 transition-all duration-300 ${
+          sidebarCollapsed ? 'ml-16' : 'ml-0 lg:ml-64'
+        }`}>
           {/* Header */}
-          <header className="h-16 glass border-b flex items-center justify-between px-6">
+          <header className="h-16 glass border-b flex items-center justify-between px-4 lg:px-6">
             <div className="flex items-center gap-4">
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="lg:hidden p-2 hover:bg-muted rounded-lg transition-colors"
+              >
+                <List className="w-5 h-5" />
+              </button>
+              
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <Brain className="w-8 h-8 text-primary animate-pulse" />
-                  <div className="absolute inset-0 w-8 h-8 bg-primary/20 rounded-full animate-ping" />
+                  <img 
+                    src={logoImage} 
+                    alt="Or4cl3 AI Solutions" 
+                    className="w-8 h-8 lg:w-10 lg:h-10 rounded-full glow"
+                  />
                 </div>
-                <div>
-                  <h1 className="text-xl font-bold text-glow">Arch1tech</h1>
+                <div className="hidden sm:block">
+                  <h1 className="text-lg lg:text-xl font-bold gradient-text font-orbitron">Arch1tech</h1>
                   <p className="text-xs text-muted-foreground">Build the future, one thought at a time</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 lg:gap-4">
               {/* Astrid Toggle */}
               <button
                 onClick={() => setAstridActive(astridActive === 'true' ? 'false' : 'true')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                className={`flex items-center gap-2 px-3 lg:px-4 py-2 rounded-lg transition-all duration-300 ${
                   astridActive === 'true'
                     ? 'bg-accent text-accent-foreground glow-accent' 
                     : 'bg-card hover:bg-muted border border-border'
                 }`}
               >
                 <Sparkle className={`w-4 h-4 ${astridActive === 'true' ? 'animate-spin' : ''}`} />
-                <span className="text-sm font-medium">Astrid</span>
+                <span className="text-sm font-medium hidden sm:inline">Astrid</span>
                 {astridActive === 'true' && (
                   <div className="w-2 h-2 bg-accent-foreground rounded-full animate-pulse" />
                 )}
               </button>
 
               {/* System Status */}
-              <div className="flex items-center gap-2 px-3 py-2 bg-card rounded-lg border border-border">
+              <div className="flex items-center gap-2 px-2 lg:px-3 py-2 bg-card rounded-lg border border-border">
                 <Cpu className="w-4 h-4 text-accent animate-pulse" />
-                <span className="text-sm text-muted-foreground">System Online</span>
+                <span className="text-sm text-muted-foreground hidden sm:inline">Online</span>
               </div>
             </div>
           </header>
 
           {/* Content Area */}
-          <div className="h-[calc(100vh-4rem)] p-6">
-            {activeView === 'command-center' && <CommandCenter />}
-            {activeView === 'agent-workspace' && <AgentWorkspace />}
-            {activeView === 'marketplace' && (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <Brain className="w-16 h-16 text-primary mx-auto mb-4 animate-pulse" />
-                  <h2 className="text-2xl font-bold mb-2">Agent Marketplace</h2>
-                  <p className="text-muted-foreground">Coming soon - Discover and share AI agents</p>
+          <div className="h-[calc(100vh-4rem)] flex flex-col">
+            <div className="flex-1 p-4 lg:p-6">
+              {activeView === 'command-center' && <CommandCenter />}
+              {activeView === 'agent-workspace' && <AgentWorkspace />}
+              {activeView === 'marketplace' && (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <Brain className="w-16 h-16 text-primary mx-auto mb-4 animate-pulse" />
+                    <h2 className="text-2xl font-bold mb-2">Agent Marketplace</h2>
+                    <p className="text-muted-foreground">Coming soon - Discover and share AI agents</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Subtle footer branding */}
+            <div className="border-t border-border/30 px-4 lg:px-6 py-2">
+              <div className="flex items-center justify-end">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
+                  <span>Powered by</span>
+                  <img 
+                    src={logoImage} 
+                    alt="Or4cl3 AI Solutions" 
+                    className="w-4 h-4 rounded-full opacity-60"
+                  />
+                  <span>Or4cl3 AI Solutions</span>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </main>
 

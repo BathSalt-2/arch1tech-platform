@@ -2,34 +2,34 @@
 @import "tw-animate-css";
 
 :root {
-  /* Holographic neon color palette */
-  --background: oklch(0.15 0.05 240);
-  --foreground: oklch(0.9 0.15 195);
+  /* Cyberpunk AI color palette inspired by the logo */
+  --background: oklch(0.08 0.02 240);
+  --foreground: oklch(0.95 0.05 180);
   
-  --card: oklch(0.18 0.08 240);
-  --card-foreground: oklch(0.98 0.02 240);
+  --card: oklch(0.12 0.05 250);
+  --card-foreground: oklch(0.98 0.02 180);
   
-  --popover: oklch(0.18 0.08 240);
-  --popover-foreground: oklch(0.98 0.02 240);
+  --popover: oklch(0.12 0.05 250);
+  --popover-foreground: oklch(0.98 0.02 180);
   
-  --primary: oklch(0.8 0.15 195);
-  --primary-foreground: oklch(0.15 0.05 240);
+  --primary: oklch(0.72 0.25 195);
+  --primary-foreground: oklch(0.08 0.02 240);
   
-  --secondary: oklch(0.6 0.2 285);
-  --secondary-foreground: oklch(0.98 0.02 240);
+  --secondary: oklch(0.68 0.28 320);
+  --secondary-foreground: oklch(0.98 0.02 180);
   
-  --muted: oklch(0.2 0.06 240);
-  --muted-foreground: oklch(0.7 0.1 195);
+  --muted: oklch(0.15 0.05 250);
+  --muted-foreground: oklch(0.65 0.15 195);
   
-  --accent: oklch(0.75 0.18 150);
-  --accent-foreground: oklch(0.15 0.05 240);
+  --accent: oklch(0.75 0.32 195);
+  --accent-foreground: oklch(0.08 0.02 240);
   
   --destructive: oklch(0.65 0.25 15);
-  --destructive-foreground: oklch(0.98 0.02 240);
+  --destructive-foreground: oklch(0.98 0.02 180);
   
-  --border: oklch(0.25 0.08 240);
-  --input: oklch(0.22 0.08 240);
-  --ring: oklch(0.8 0.15 195);
+  --border: oklch(0.25 0.08 250);
+  --input: oklch(0.18 0.06 250);
+  --ring: oklch(0.72 0.25 195);
   
   --radius: 0.75rem;
 }
@@ -70,23 +70,32 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
     background-image: 
-      radial-gradient(circle at 20% 50%, oklch(0.6 0.2 285 / 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, oklch(0.75 0.18 150 / 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 40% 80%, oklch(0.8 0.15 195 / 0.08) 0%, transparent 50%);
+      radial-gradient(circle at 20% 50%, oklch(0.68 0.28 320 / 0.12) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, oklch(0.72 0.25 195 / 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, oklch(0.75 0.32 195 / 0.06) 0%, transparent 50%),
+      linear-gradient(135deg, transparent 0%, oklch(0.68 0.28 320 / 0.03) 100%);
+  }
+  
+  .font-orbitron {
+    font-family: 'Orbitron', monospace;
+  }
+  
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
   }
 }
 
 @layer utilities {
   .glow {
-    box-shadow: 0 0 20px oklch(0.8 0.15 195 / 0.3);
+    box-shadow: 0 0 20px oklch(0.72 0.25 195 / 0.4);
   }
   
   .glow-accent {
-    box-shadow: 0 0 20px oklch(0.75 0.18 150 / 0.3);
+    box-shadow: 0 0 20px oklch(0.75 0.32 195 / 0.4);
   }
   
   .glow-secondary {
-    box-shadow: 0 0 20px oklch(0.6 0.2 285 / 0.3);
+    box-shadow: 0 0 20px oklch(0.68 0.28 320 / 0.4);
   }
   
   .text-glow {
@@ -94,26 +103,82 @@
   }
   
   .border-glow {
-    border-color: oklch(0.8 0.15 195);
-    box-shadow: 0 0 10px oklch(0.8 0.15 195 / 0.2);
+    border-color: oklch(0.72 0.25 195);
+    box-shadow: 0 0 10px oklch(0.72 0.25 195 / 0.3);
   }
   
   .glass {
     backdrop-filter: blur(12px);
-    background: oklch(0.18 0.08 240 / 0.8);
-    border: 1px solid oklch(0.8 0.15 195 / 0.2);
+    background: oklch(0.12 0.05 250 / 0.8);
+    border: 1px solid oklch(0.72 0.25 195 / 0.2);
   }
   
   .pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite alternate;
   }
   
+  .gradient-text {
+    background: linear-gradient(135deg, oklch(0.72 0.25 195), oklch(0.68 0.28 320));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .hero-gradient {
+    background: linear-gradient(135deg, 
+      oklch(0.72 0.25 195 / 0.1) 0%, 
+      oklch(0.68 0.28 320 / 0.15) 50%, 
+      oklch(0.75 0.32 195 / 0.1) 100%);
+  }
+  
   @keyframes pulse-glow {
     from {
-      box-shadow: 0 0 20px oklch(0.8 0.15 195 / 0.2);
+      box-shadow: 0 0 20px oklch(0.72 0.25 195 / 0.2);
     }
     to {
-      box-shadow: 0 0 30px oklch(0.8 0.15 195 / 0.4);
+      box-shadow: 0 0 30px oklch(0.72 0.25 195 / 0.5);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  .spin-slow {
+    animation: spin-slow 20s linear infinite;
+  }
+  
+  /* Mobile-first responsive improvements */
+  @media (max-width: 768px) {
+    .glass {
+      backdrop-filter: blur(8px);
+      background: oklch(0.12 0.05 250 / 0.9);
+    }
+  }
+  
+  /* Touch-friendly interactions */
+  @media (hover: none) and (pointer: coarse) {
+    .glow {
+      box-shadow: 0 0 15px oklch(0.72 0.25 195 / 0.3);
+    }
+    
+    .glow-accent {
+      box-shadow: 0 0 15px oklch(0.75 0.32 195 / 0.3);
+    }
+    
+    .glow-secondary {
+      box-shadow: 0 0 15px oklch(0.68 0.28 320 / 0.3);
     }
   }
 }
+  

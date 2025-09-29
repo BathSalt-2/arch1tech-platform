@@ -35,14 +35,23 @@ const secondaryItems = [
 
 export function Sidebar({ collapsed, onToggle, activeView, onViewChange }: SidebarProps) {
   return (
-    <div className={`fixed left-0 top-0 h-full bg-card border-r border-border transition-all duration-300 z-10 ${
-      collapsed ? 'w-16' : 'w-64'
-    }`}>
-      <div className="flex flex-col h-full">
-        {/* Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-border">
-          {!collapsed && (
-            <div className="flex items-center gap-2">
+    <>
+      {/* Mobile overlay */}
+      {!collapsed && (
+        <div 
+          className="fixed inset-0 bg-black/50 lg:hidden z-20"
+          onClick={onToggle}
+        />
+      )}
+      
+      <div className={`fixed left-0 top-0 h-full bg-card border-r border-border transition-all duration-300 z-30 ${
+        collapsed ? 'w-16 lg:w-16' : 'w-64'
+      } ${collapsed ? '' : 'lg:relative'}`}>
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="h-16 flex items-center justify-between px-4 border-b border-border">
+            {!collapsed && (
+              <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Brain className="w-5 h-5 text-primary-foreground" />
               </div>
@@ -108,5 +117,6 @@ export function Sidebar({ collapsed, onToggle, activeView, onViewChange }: Sideb
         </div>
       </div>
     </div>
+    </>
   )
 }
