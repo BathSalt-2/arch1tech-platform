@@ -525,10 +525,10 @@ Respond as Astrid. Be conversational, provide confidence estimates, and suggest 
         <div className="border-b border-border p-4">
           <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
             <Robot className="w-4 h-4" />
-            Active Tasks ({activeTasks.filter(t => t.status !== 'completed').length})
+            Active Tasks ({(activeTasks || []).filter(t => t.status !== 'completed').length})
           </h3>
           <div className="space-y-2">
-            {activeTasks.slice(-3).map((task) => (
+            {(activeTasks || []).slice(-3).map((task) => (
               <div key={task.id} className="bg-muted/50 rounded-lg p-2">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium">{task.title}</span>

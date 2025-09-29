@@ -289,14 +289,14 @@ export function AgentWorkspace() {
                 </div>
                 
                 <div className="flex flex-wrap gap-1 mt-3">
-                  {agent.tags.slice(0, 3).map((tag) => (
+                  {(agent.tags || []).slice(0, 3).map((tag) => (
                     <Badge key={tag} variant="outline" className="text-xs">
                       {tag}
                     </Badge>
                   ))}
-                  {agent.tags.length > 3 && (
+                  {(agent.tags || []).length > 3 && (
                     <Badge variant="outline" className="text-xs">
-                      +{agent.tags.length - 3}
+                      +{(agent.tags || []).length - 3}
                     </Badge>
                   )}
                 </div>

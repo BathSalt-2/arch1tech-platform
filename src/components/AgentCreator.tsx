@@ -293,19 +293,19 @@ export function AgentCreator({ isVisible, onClose, initialPrompt }: AgentCreator
                             </div>
                             <div className="flex items-center gap-1">
                               <Lightning className="w-3 h-3" />
-                              <span>{agent.metadata.responseTime}ms</span>
+                              <span>{agent.metadata?.responseTime || 0}ms</span>
                             </div>
                           </div>
 
                           <div className="flex flex-wrap gap-1 mt-2">
-                            {agent.capabilities.slice(0, 3).map((cap, idx) => (
+                            {(agent.capabilities || []).slice(0, 3).map((cap, idx) => (
                               <Badge key={idx} variant="outline" className="text-xs">
                                 {cap}
                               </Badge>
                             ))}
-                            {agent.capabilities.length > 3 && (
+                            {(agent.capabilities || []).length > 3 && (
                               <Badge variant="outline" className="text-xs">
-                                +{agent.capabilities.length - 3} more
+                                +{(agent.capabilities || []).length - 3} more
                               </Badge>
                             )}
                           </div>
