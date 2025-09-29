@@ -6,6 +6,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { useKV } from '@github/spark/hooks'
+import { ensureAgentMetadata } from '@/utils/agentHelpers'
+import type { Agent } from '@/utils/agentHelpers'
 import { 
   Brain, 
   Lightning, 
@@ -20,24 +22,6 @@ import {
   Network,
   Shield
 } from '@phosphor-icons/react'
-
-interface Agent {
-  id: string
-  name: string
-  description: string
-  type: 'conversational' | 'task-automation' | 'data-analysis' | 'creative' | 'security'
-  capabilities: string[]
-  status: 'draft' | 'training' | 'deployed' | 'error'
-  confidence: number
-  createdAt: string
-  updatedAt: string
-  metadata: {
-    memorySize: number
-    responseTime: number
-    successRate: number
-    interactions: number
-  }
-}
 
 interface AgentCreatorProps {
   isVisible: boolean
@@ -55,6 +39,9 @@ export function AgentCreator({ isVisible, onClose, initialPrompt }: AgentCreator
     type: 'conversational' as Agent['type'],
     prompt: initialPrompt || ''
   })
+
+  // Ensure all agents have proper metadata structure
+  const safeAgents = ensureAgentMetadata(agents)
 
   useEffect(() => {
     if (initialPrompt) {
@@ -278,8 +265,8 @@ export function AgentCreator({ isVisible, onClose, initialPrompt }: AgentCreator
                 </h3>
                 
                 <div className="space-y-3 max-h-[500px] overflow-y-auto">
-                  {agents && agents.length > 0 ? (
-                    agents.slice().reverse().map((agent) => (
+                  {safeAgents && safeAgents.length > 0 ? (
+                    safeAgents.slice().reverse().map((agent) => (
                       <Card key={agent.id} className="bg-muted/50 border-border/50">
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-2">
