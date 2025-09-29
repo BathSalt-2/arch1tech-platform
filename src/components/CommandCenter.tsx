@@ -5,8 +5,6 @@ import { Badge } from '@/components/ui/badge'
 import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { AgentCreator } from './AgentCreator'
-import { ensureAgentMetadata } from '@/utils/agentHelpers'
-import type { Agent } from '@/utils/agentHelpers'
 import { 
   Brain, 
   Lightning, 
@@ -25,14 +23,29 @@ import {
   WarningCircle
 } from '@phosphor-icons/react'
 
+interface Agent {
+  id: string
+  name: string
+  description: string
+  type: 'conversational' | 'task-automation' | 'data-analysis' | 'creative' | 'security'
+  capabilities: string[]
+  status: 'draft' | 'training' | 'deployed' | 'error'
+  confidence: number
+  createdAt: string
+  updatedAt: string
+  metadata: {
+    memorySize: number
+    responseTime: number
+    successRate: number
+    interactions: number
+  }
+}
+
 export function CommandCenter() {
   const [agents, setAgents] = useKV<Agent[]>('arch1tech-agents', [])
   const [thoughtInput, setThoughtInput] = useState('')
   const [isBuilding, setIsBuilding] = useState(false)
   const [showAgentCreator, setShowAgentCreator] = useState(false)
-
-  // Ensure all agents have proper metadata structure
-  const safeAgents = ensureAgentMetadata(agents)
 
   const handleQuickCreate = async () => {
     if (!thoughtInput.trim()) return
@@ -60,7 +73,7 @@ Be creative and intelligent about the agent type and capabilities based on the u
         
         const newAgent: Agent = {
           id: `agent-${Date.now()}`,
-          name: agentSpec.name || `AI Agent ${safeAgents.length + 1}`,
+          name: agentSpec.name || `AI Agent ${(agents || []).length + 1}`,
           description: agentSpec.description || thoughtInput.trim(),
           type: agentSpec.type || 'conversational',
           capabilities: agentSpec.capabilities || ['Natural Language Processing', 'Context Awareness'],
@@ -81,7 +94,7 @@ Be creative and intelligent about the agent type and capabilities based on the u
         // Fallback for when spark API is not available
         const newAgent: Agent = {
           id: `agent-${Date.now()}`,
-          name: `AI Agent ${safeAgents.length + 1}`,
+          name: `AI Agent ${(agents || []).length + 1}`,
           description: thoughtInput.trim(),
           type: 'conversational',
           capabilities: ['Natural Language Processing', 'Context Awareness', 'Memory Management'],
@@ -207,13 +220,13 @@ Be creative and intelligent about the agent type and capabilities based on the u
         </Card>
 
         {/* Agent Statistics */}
-        {safeAgents.length > 0 && (
+        {(agents || []).length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="glass p-4">
               <div className="flex items-center gap-3">
                 <Robot className="w-8 h-8 text-accent" />
                 <div>
-                  <div className="text-2xl font-bold">{safeAgents.length}</div>
+                  <div className="text-2xl font-bold">{(agents || []).length}</div>
                   <div className="text-sm text-muted-foreground">Total Agents</div>
                 </div>
               </div>
@@ -223,7 +236,7 @@ Be creative and intelligent about the agent type and capabilities based on the u
                 <Play className="w-8 h-8 text-green-500" />
                 <div>
                   <div className="text-2xl font-bold">
-                    {safeAgents.filter(a => a.status === 'deployed').length}
+                    {(agents || []).filter(a => a.status === 'deployed').length}
                   </div>
                   <div className="text-sm text-muted-foreground">Deployed</div>
                 </div>
@@ -234,7 +247,7 @@ Be creative and intelligent about the agent type and capabilities based on the u
                 <Brain className="w-8 h-8 text-primary" />
                 <div>
                   <div className="text-2xl font-bold">
-                    {Math.round((safeAgents.reduce((acc, agent) => acc + agent.confidence, 0) / safeAgents.length) * 100) || 0}%
+                    {Math.round(((agents || []).reduce((acc, agent) => acc + agent.confidence, 0) / (agents || []).length) * 100) || 0}%
                   </div>
                   <div className="text-sm text-muted-foreground">Avg Confidence</div>
                 </div>
@@ -245,7 +258,7 @@ Be creative and intelligent about the agent type and capabilities based on the u
                 <Network className="w-8 h-8 text-accent" />
                 <div>
                   <div className="text-2xl font-bold">
-                    {safeAgents.reduce((acc, agent) => acc + (agent.metadata?.interactions || 0), 0)}
+                    {(agents || []).reduce((acc, agent) => acc + (agent.metadata?.interactions || 0), 0)}
                   </div>
                   <div className="text-sm text-muted-foreground">Interactions</div>
                 </div>
@@ -262,11 +275,11 @@ Be creative and intelligent about the agent type and capabilities based on the u
               Your Agents
             </h2>
             <div className="text-sm text-muted-foreground">
-              {safeAgents.length} agent{safeAgents.length !== 1 ? 's' : ''} created
+              {(agents || []).length} agent{(agents || []).length !== 1 ? 's' : ''} created
             </div>
           </div>
 
-          {safeAgents.length === 0 ? (
+          {(agents || []).length === 0 ? (
             <Card className="glass p-12 text-center">
               <Brain className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-medium text-muted-foreground mb-2">No agents yet</h3>
@@ -278,7 +291,7 @@ Be creative and intelligent about the agent type and capabilities based on the u
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {safeAgents.map((agent) => {
+              {(agents || []).map((agent) => {
                 const IconComponent = getTypeIcon(agent.type)
                 return (
                   <Card key={agent.id} className="glass p-6 hover:glow transition-all duration-300 cursor-pointer group">

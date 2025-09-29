@@ -54,10 +54,12 @@
 - **Purpose**: Provides expert-level assistance and automated optimization
 - **Success Criteria**: Users report >3x faster development with Astrid active
 
-### 3. Visual Agent Designer
-- **Functionality**: Drag-and-drop interface for complex workflow editing
-- **Purpose**: Provides granular control while maintaining simplicity
-- **Success Criteria**: 80% of users successfully edit generated workflows
+### 3. Agent Workspace & Marketplace
+- **Functionality**: Complete agent creation, editing, and management platform with integrated marketplace
+- **Purpose**: Provides full-featured development environment and community-driven agent sharing
+- **Trigger**: Navigate to Agent Workspace or Marketplace from sidebar
+- **Progression**: Browse workspace dashboard → Create/edit agents → Configure settings/prompt/code → Deploy → Monitor analytics OR Browse marketplace → Search/filter agents → Install → Configure locally
+- **Success Criteria**: 90%+ successful agent creation and deployment, 70%+ marketplace installation success rate
 
 ### 4. One-Click Deployment
 - **Functionality**: Deploy to multiple platforms instantly

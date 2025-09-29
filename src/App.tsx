@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { CommandCenter } from './components/CommandCenter'
 import { Sidebar } from './components/Sidebar'
 import { AgentWorkspace } from './components/AgentWorkspace'
+import { AgentMarketplace } from './components/AgentMarketplace'
 import { AstridPanel } from './components/AstridPanel'
 import { LandingPage } from './components/LandingPage'
 import { LoadingScreen } from './components/LoadingScreen'
@@ -115,15 +116,7 @@ function App() {
             <div className="flex-1 p-4 lg:p-6">
               {activeView === 'command-center' && <CommandCenter />}
               {activeView === 'agent-workspace' && <AgentWorkspace />}
-              {activeView === 'marketplace' && (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <Brain className="w-16 h-16 text-primary mx-auto mb-4 animate-pulse" />
-                    <h2 className="text-2xl font-bold mb-2">Agent Marketplace</h2>
-                    <p className="text-muted-foreground">Coming soon - Discover and share AI agents</p>
-                  </div>
-                </div>
-              )}
+              {activeView === 'marketplace' && <AgentMarketplace />}
             </div>
             
             {/* Subtle footer branding */}
