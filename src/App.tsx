@@ -80,8 +80,8 @@ function App() {
                   />
                 </div>
                 <div className="hidden sm:block">
-                  <h1 className="text-lg lg:text-xl font-bold gradient-text font-orbitron">Arch1tech</h1>
-                  <p className="text-xs text-muted-foreground">Build the future, one thought at a time</p>
+                  <h1 className="text-lg lg:text-xl font-bold gradient-text font-orbitron">Arch1tech 2.0</h1>
+                  <p className="text-xs text-muted-foreground">The prompt is the product</p>
                 </div>
               </div>
             </div>

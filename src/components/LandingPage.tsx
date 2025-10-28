@@ -10,23 +10,23 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
   const features = [
     {
       icon: Brain,
-      title: "Thought-to-App Engine",
-      description: "Transform ideas into intelligent agents using natural language"
+      title: "Text/Voice-to-Agent",
+      description: "Create autonomous AI agents via natural conversation"
     },
     {
       icon: Sparkle,
-      title: "Astrid AI Copilot",
-      description: "Autonomous AI assistant that builds and optimizes for you"
+      title: "Astrid 2.0 Copilot",
+      description: "Self-aware AI assistant with Σ-Matrix stability monitoring"
     },
     {
       icon: Lightning,
-      title: "Visual Agent Designer",
-      description: "Drag-and-drop interface for complex AI workflows"
+      title: "VibeCodeAI Translation",
+      description: "Natural language becomes executable agent blueprints"
     },
     {
       icon: Cpu,
-      title: "One-Click Deployment",
-      description: "Deploy to any platform with a single click"
+      title: "OOML Community",
+      description: "Share and remix agents under reciprocal open licensing"
     }
   ]
 
@@ -65,7 +65,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               />
             </div>
             <div>
-              <h1 className="text-xl lg:text-2xl font-bold gradient-text font-orbitron">Arch1tech</h1>
+              <h1 className="text-xl lg:text-2xl font-bold gradient-text font-orbitron">Arch1tech 2.0</h1>
               <p className="text-xs lg:text-sm text-muted-foreground hidden sm:block">
                 Powered by Or4cl3 AI Solutions
               </p>
@@ -88,18 +88,17 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-full text-sm text-muted-foreground">
                 <Cpu className="w-4 h-4 text-accent animate-pulse" />
-                Next-Generation AI Platform
+                Self-Evolving Multimodal AI Lab
               </div>
               
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight font-orbitron">
-                Build the{' '}
-                <span className="gradient-text">future</span>,<br />
-                one thought at a time
+                The <span className="gradient-text">prompt</span><br />
+                is the <span className="gradient-text">product</span>
               </h1>
               
               <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Transform your ideas into intelligent AI agents, workflows, and applications
-                using natural language. No coding required—just pure imagination.
+                Transform natural language into deployable AI systems. Voice or text—create agents, workflows, 
+                and full-stack applications with Astrid, your autonomous copilot.
               </p>
             </div>
 

@@ -11,12 +11,12 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [loadingText, setLoadingText] = useState('Initializing AI Systems...')
 
   const loadingSteps = [
-    'Initializing AI Systems...',
-    'Loading Neural Networks...',
-    'Calibrating Quantum Processors...',
-    'Establishing Astrid Connection...',
-    'Syncing Agent Protocols...',
-    'Ready for Deployment...'
+    'Initializing Σ-Matrix framework...',
+    'Loading VibeCodeAI engine...',
+    'Calibrating ERPS monitoring...',
+    'Establishing Astrid 2.0 connection...',
+    'Syncing agent protocols...',
+    'Ready for creation...'
   ]
 
   useEffect(() => {
@@ -81,9 +81,9 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
         {/* Brand */}
         <div className="space-y-2">
-          <h1 className="text-3xl lg:text-4xl font-bold gradient-text font-orbitron">Arch1tech</h1>
+          <h1 className="text-3xl lg:text-4xl font-bold gradient-text font-orbitron">Arch1tech 2.0</h1>
           <p className="text-muted-foreground text-sm">
-            Powered by Or4cl3 AI Solutions
+            The prompt is the product
           </p>
         </div>
 
