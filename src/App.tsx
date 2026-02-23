@@ -1,4 +1,4 @@
-import { useKV } from '@github/spark/hooks'
+import { useKV } from './hooks/useKV'
 import { useState } from 'react'
 import { CommandCenter } from './components/CommandCenter'
 import { Sidebar } from './components/Sidebar'
@@ -8,7 +8,6 @@ import { AstridPanel } from './components/AstridPanel'
 import { LandingPage } from './components/LandingPage'
 import { LoadingScreen } from './components/LoadingScreen'
 import { Cpu, Brain, Sparkle, List } from '@phosphor-icons/react'
-import logoImage from '@/assets/images/image.png'
 
 function App() {
   const [hasVisited, setHasVisited] = useKV('arch1tech-has-visited', 'false')
@@ -73,11 +72,7 @@ function App() {
               
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <img 
-                    src={logoImage} 
-                    alt="Or4cl3 AI Solutions" 
-                    className="w-8 h-8 lg:w-10 lg:h-10 rounded-full glow"
-                  />
+                  <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center glow"><span className="text-white font-bold text-sm font-mono">Ω</span></div>
                 </div>
                 <div className="hidden sm:block">
                   <h1 className="text-lg lg:text-xl font-bold gradient-text font-orbitron">Arch1tech 2.0</h1>
@@ -124,11 +119,7 @@ function App() {
               <div className="flex items-center justify-end">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
                   <span>Powered by</span>
-                  <img 
-                    src={logoImage} 
-                    alt="Or4cl3 AI Solutions" 
-                    className="w-4 h-4 rounded-full opacity-60"
-                  />
+                  <div className="w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center opacity-60"><span className="text-white font-bold text-xs font-mono">Ω</span></div>
                   <span>Or4cl3 AI Solutions</span>
                 </div>
               </div>

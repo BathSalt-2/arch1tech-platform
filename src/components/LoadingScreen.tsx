@@ -1,170 +1,59 @@
-import { useEffect, useState } from 'react'
-import { Brain, Cpu, Sparkle } from '@phosphor-icons/react'
-import logoImage from '@/assets/images/image.png'
+import React, { useState, useEffect } from 'react';
 
-interface LoadingScreenProps {
-  onComplete: () => void
-}
+interface Props { onComplete: () => void; }
 
-export function LoadingScreen({ onComplete }: LoadingScreenProps) {
-  const [progress, setProgress] = useState(0)
-  const [loadingText, setLoadingText] = useState('Initializing AI Systems...')
-
-  const loadingSteps = [
-    'Initializing Σ-Matrix framework...',
-    'Loading VibeCodeAI engine...',
-    'Calibrating ERPS monitoring...',
-    'Establishing Astrid 2.0 connection...',
-    'Syncing agent protocols...',
-    'Ready for creation...'
-  ]
+export const LoadingScreen: React.FC<Props> = ({ onComplete }) => {
+  const [progress, setProgress] = useState(0);
+  const steps = [
+    { at: 20, msg: 'LOADING NEURAL DRIVERS...' },
+    { at: 45, msg: 'CALIBRATING Σ-MATRIX...' },
+    { at: 65, msg: 'INITIALIZING VIBECODEAI...' },
+    { at: 85, msg: 'SYNCING ASTRID CORE...' },
+    { at: 100, msg: 'SYSTEM ONLINE. WELCOME.' },
+  ];
+  const [status, setStatus] = useState(steps[0].msg);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress(prev => {
-        const newProgress = prev + 2
-        
-        // Update loading text based on progress
-        const stepIndex = Math.floor((newProgress / 100) * loadingSteps.length)
-        if (stepIndex < loadingSteps.length) {
-          setLoadingText(loadingSteps[stepIndex])
-        }
-        
-        if (newProgress >= 100) {
-          clearInterval(timer)
-          setTimeout(onComplete, 500)
-          return 100
-        }
-        return newProgress
-      })
-    }, 50)
-
-    return () => clearInterval(timer)
-  }, [onComplete])
+    const interval = setInterval(() => {
+      setProgress(p => {
+        const next = Math.min(p + Math.random() * 4 + 1, 100);
+        const step = steps.find(s => s.at > p && s.at <= next);
+        if (step) setStatus(step.msg);
+        if (next >= 100) { clearInterval(interval); setTimeout(onComplete, 600); }
+        return next;
+      });
+    }, 60);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="fixed inset-0 bg-background z-50 flex items-center justify-center">
-      {/* Animated background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating particles */}
-        {Array.from({ length: 30 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-primary rounded-full animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${1 + Math.random() * 2}s`,
-              opacity: Math.random() * 0.6 + 0.2
-            }}
-          />
-        ))}
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-8">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.02)_1px,transparent_1px)] bg-[size:50px_50px]" />
+      
+      <div className="relative z-10 w-full max-w-md space-y-8 text-center">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center glow pulse-glow mx-auto">
+          <span className="text-white font-bold text-3xl font-mono">Ω</span>
+        </div>
         
-        {/* Rotating gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-primary/20 to-transparent rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gradient-to-r from-secondary/20 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
-
-      <div className="relative z-10 text-center space-y-8 max-w-md mx-auto px-6">
-        {/* Logo */}
-        <div className="flex justify-center">
-          <div className="relative">
-            <img 
-              src={logoImage} 
-              alt="Or4cl3 AI Solutions" 
-              className="w-24 h-24 lg:w-32 lg:h-32 rounded-full glow spin-slow"
+        <div>
+          <h2 className="text-2xl font-bold gradient-text font-orbitron tracking-wider">ARCH1TECH</h2>
+          <p className="text-muted-foreground text-sm font-mono mt-1">Platform v2.0</p>
+        </div>
+        
+        <div className="space-y-3">
+          <div className="flex justify-between text-xs font-mono text-muted-foreground">
+            <span>INITIALIZING</span>
+            <span className="text-primary">{Math.round(progress)}%</span>
+          </div>
+          <div className="h-2 bg-card rounded-full overflow-hidden border border-border">
+            <div
+              className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-75"
+              style={{ width: `${progress}%` }}
             />
-            <div className="absolute inset-0 w-24 h-24 lg:w-32 lg:h-32 border-2 border-primary/30 rounded-full animate-ping" />
           </div>
-        </div>
-
-        {/* Brand */}
-        <div className="space-y-2">
-          <h1 className="text-3xl lg:text-4xl font-bold gradient-text font-orbitron">Arch1tech 2.0</h1>
-          <p className="text-muted-foreground text-sm">
-            The prompt is the product
-          </p>
-        </div>
-
-        {/* Loading Animation */}
-        <div className="space-y-6">
-          {/* AI Icons Animation */}
-          <div className="flex items-center justify-center gap-4">
-            <div className="p-3 bg-primary/10 rounded-lg animate-pulse">
-              <Brain className="w-6 h-6 text-primary" />
-            </div>
-            <div className="p-3 bg-secondary/10 rounded-lg animate-pulse" style={{ animationDelay: '0.5s' }}>
-              <Cpu className="w-6 h-6 text-secondary" />
-            </div>
-            <div className="p-3 bg-accent/10 rounded-lg animate-pulse" style={{ animationDelay: '1s' }}>
-              <Sparkle className="w-6 h-6 text-accent" />
-            </div>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="space-y-3">
-            <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-300 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">{Math.round(progress)}%</span>
-              <span className="text-muted-foreground">Complete</span>
-            </div>
-          </div>
-
-          {/* Loading Text */}
-          <div className="space-y-2">
-            <p className="text-foreground font-medium animate-pulse">
-              {loadingText}
-            </p>
-            <div className="flex items-center justify-center gap-1">
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-            </div>
-          </div>
-        </div>
-
-        {/* Status Indicators */}
-        <div className="grid grid-cols-3 gap-4 pt-4">
-          <div className={`p-3 bg-card rounded-lg border transition-all duration-300 ${
-            progress > 20 ? 'border-primary glow' : 'border-border'
-          }`}>
-            <div className="text-xs text-center space-y-1">
-              <div className={`w-2 h-2 rounded-full mx-auto ${
-                progress > 20 ? 'bg-primary' : 'bg-muted'
-              }`} />
-              <span className="text-muted-foreground">Core</span>
-            </div>
-          </div>
-          
-          <div className={`p-3 bg-card rounded-lg border transition-all duration-300 ${
-            progress > 60 ? 'border-secondary glow-secondary' : 'border-border'
-          }`}>
-            <div className="text-xs text-center space-y-1">
-              <div className={`w-2 h-2 rounded-full mx-auto ${
-                progress > 60 ? 'bg-secondary' : 'bg-muted'
-              }`} />
-              <span className="text-muted-foreground">Astrid</span>
-            </div>
-          </div>
-          
-          <div className={`p-3 bg-card rounded-lg border transition-all duration-300 ${
-            progress > 90 ? 'border-accent glow-accent' : 'border-border'
-          }`}>
-            <div className="text-xs text-center space-y-1">
-              <div className={`w-2 h-2 rounded-full mx-auto ${
-                progress > 90 ? 'bg-accent' : 'bg-muted'
-              }`} />
-              <span className="text-muted-foreground">Deploy</span>
-            </div>
-          </div>
+          <p className="text-xs text-primary/70 font-mono animate-pulse">{`> ${status}`}</p>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

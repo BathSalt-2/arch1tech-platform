@@ -1,527 +1,167 @@
-import { useState } from 'react'
-import { useKV } from '@github/spark/hooks'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { 
-  Brain, 
-  Code, 
-  GitBranch, 
-  Plus, 
-  Play, 
-  Pause, 
-  Trash, 
-  PencilSimple as Edit, 
-  Copy,
-  Download,
-  Gear as Settings,
-  Eye,
-  Lightning,
-  Robot,
-  ChatCircle as MessageCircle,
-  Database,
-  Globe
-} from '@phosphor-icons/react'
-import { toast } from 'sonner'
+import React, { useState } from 'react';
+import { Robot, PencilSimple, Trash, Play, Pause } from '@phosphor-icons/react';
 
 interface Agent {
-  id: string
-  name: string
-  description: string
-  type: 'chatbot' | 'assistant' | 'analyzer' | 'automation'
-  status: 'active' | 'paused' | 'draft'
-  created: string
-  lastModified: string
-  deployments: number
-  interactions: number
-  code?: string
-  prompt?: string
-  tags: string[]
+  id: number;
+  name: string;
+  role: string;
+  type: string;
+  systemPrompt: string;
+  capabilities?: string[];
+  status: 'active' | 'draft' | 'paused';
+  createdAt: string;
 }
 
-export function AgentWorkspace() {
-  const [agents, setAgents] = useKV<Agent[]>('agents', [])
-  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null)
-  const [isCreating, setIsCreating] = useState(false)
-  const [activeTab, setActiveTab] = useState('overview')
+export const AgentWorkspace: React.FC = () => {
+  const [agents, setAgents] = useState<Agent[]>(() => JSON.parse(localStorage.getItem('arch1tech-agents') || '[]'));
+  const [selected, setSelected] = useState<Agent | null>(null);
+  const [activeTab, setActiveTab] = useState<'settings' | 'prompt' | 'analytics'>('settings');
+  const [editing, setEditing] = useState(false);
+  const [editValues, setEditValues] = useState<Partial<Agent>>({});
 
-  const createAgent = async (agentData: Partial<Agent>) => {
-    const newAgent: Agent = {
-      id: Date.now().toString(),
-      name: agentData.name || 'Untitled Agent',
-      description: agentData.description || 'A new AI agent',
-      type: agentData.type || 'chatbot',
-      status: 'draft',
-      created: new Date().toISOString(),
-      lastModified: new Date().toISOString(),
-      deployments: 0,
-      interactions: 0,
-      tags: agentData.tags || [],
-      prompt: agentData.prompt || '',
-      code: agentData.code || ''
-    }
+  const save = (agents: Agent[]) => {
+    setAgents(agents);
+    localStorage.setItem('arch1tech-agents', JSON.stringify(agents));
+  };
 
-    setAgents((current = []) => [newAgent, ...current])
-    setSelectedAgent(newAgent)
-    setIsCreating(false)
-    toast.success('Agent created successfully!')
-  }
+  const toggleStatus = (id: number) => {
+    const updated = agents.map(a => a.id === id ? { ...a, status: (a.status === 'active' ? 'paused' : 'active') as Agent['status'] } : a);
+    save(updated);
+    if (selected?.id === id) setSelected(updated.find(a => a.id === id) || null);
+  };
 
-  const updateAgent = (updatedAgent: Agent) => {
-    setAgents((current = []) =>
-      current.map(agent =>
-        agent.id === updatedAgent.id
-          ? { ...updatedAgent, lastModified: new Date().toISOString() }
-          : agent
-      )
-    )
-    setSelectedAgent(updatedAgent)
-    toast.success('Agent updated successfully!')
-  }
+  const deleteAgent = (id: number) => {
+    const updated = agents.filter(a => a.id !== id);
+    save(updated);
+    if (selected?.id === id) setSelected(null);
+  };
 
-  const deleteAgent = (agentId: string) => {
-    setAgents((current = []) => current.filter(agent => agent.id !== agentId))
-    if (selectedAgent?.id === agentId) {
-      setSelectedAgent(null)
-    }
-    toast.success('Agent deleted successfully!')
-  }
+  const saveEdit = () => {
+    if (!selected) return;
+    const updated = agents.map(a => a.id === selected.id ? { ...a, ...editValues } : a);
+    save(updated);
+    const updated_sel = updated.find(a => a.id === selected.id) || null;
+    setSelected(updated_sel);
+    setEditing(false);
+  };
 
-  const toggleAgentStatus = (agent: Agent) => {
-    const newStatus = agent.status === 'active' ? 'paused' : 'active'
-    updateAgent({ ...agent, status: newStatus })
-    toast.success(`Agent ${newStatus === 'active' ? 'activated' : 'paused'}!`)
-  }
+  const statusColors = { active: 'text-green-400', paused: 'text-yellow-400', draft: 'text-muted-foreground' };
 
-  const duplicateAgent = (agent: Agent) => {
-    const duplicatedAgent: Agent = {
-      ...agent,
-      id: Date.now().toString(),
-      name: `${agent.name} (Copy)`,
-      created: new Date().toISOString(),
-      lastModified: new Date().toISOString(),
-      status: 'draft',
-      deployments: 0,
-      interactions: 0
-    }
-
-    setAgents((current = []) => [duplicatedAgent, ...current])
-    toast.success('Agent duplicated successfully!')
-  }
-
-  const getAgentIcon = (type: Agent['type']) => {
-    switch (type) {
-      case 'chatbot': return MessageCircle
-      case 'assistant': return Robot
-      case 'analyzer': return Database
-      case 'automation': return Lightning
-      default: return Brain
-    }
-  }
-
-  const getStatusColor = (status: Agent['status']) => {
-    switch (status) {
-      case 'active': return 'bg-green-500/20 text-green-400 border-green-500/30'
-      case 'paused': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-      case 'draft': return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-    }
-  }
-
-  if (selectedAgent) {
-    return <AgentEditor agent={selectedAgent} onUpdate={updateAgent} onBack={() => setSelectedAgent(null)} />
+  if (agents.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 text-center">
+        <Robot size={64} className="text-muted-foreground/30 mb-4" />
+        <h3 className="text-lg font-semibold text-muted-foreground">No agents yet</h3>
+        <p className="text-sm text-muted-foreground mt-2">Go to Command Center to create your first agent</p>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold gradient-text font-orbitron">Agent Workspace</h1>
-          <p className="text-muted-foreground">Build, deploy, and manage your AI agents</p>
+    <div className="flex h-full gap-6">
+      {/* Agent List */}
+      <div className="w-64 flex-shrink-0 space-y-2">
+        <h3 className="text-xs font-semibold text-muted-foreground font-orbitron mb-3">AGENTS ({agents.length})</h3>
+        {agents.map(agent => (
+          <button
+            key={agent.id}
+            onClick={() => { setSelected(agent); setActiveTab('settings'); setEditing(false); }}
+            className={`w-full text-left glass rounded-xl p-3 border transition-colors ${selected?.id === agent.id ? 'border-primary/40 bg-primary/5' : 'border-border/30 hover:border-primary/20'}`}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <Robot size={14} className="text-primary flex-shrink-0" />
+              <span className="text-sm font-semibold truncate">{agent.name}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">{agent.role}</span>
+              <span className={`text-xs ${statusColors[agent.status]}`}>●</span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Editor Panel */}
+      {selected ? (
+        <div className="flex-1 glass rounded-xl border border-border/30 overflow-hidden">
+          {/* Header */}
+          <div className="border-b border-border/30 px-6 py-4 flex items-center justify-between">
+            <div>
+              <h2 className="font-bold text-lg">{selected.name}</h2>
+              <p className="text-sm text-muted-foreground">{selected.role}</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => toggleStatus(selected.id)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${selected.status === 'active' ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' : 'bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20'}`}>
+                {selected.status === 'active' ? <><Pause size={12}/> Pause</> : <><Play size={12}/> Activate</>}
+              </button>
+              {!editing && <button onClick={() => { setEditing(true); setEditValues({ name: selected.name, role: selected.role, systemPrompt: selected.systemPrompt }); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-lg text-xs font-semibold hover:bg-muted/80"><PencilSimple size={12}/> Edit</button>}
+              <button onClick={() => deleteAgent(selected.id)} className="p-2 text-muted-foreground hover:text-red-400 transition-colors"><Trash size={16}/></button>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="border-b border-border/30 px-6 flex gap-4">
+            {(['settings', 'prompt', 'analytics'] as const).map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)} className={`py-3 text-sm font-medium capitalize border-b-2 transition-colors ${activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>{tab}</button>
+            ))}
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
+            {activeTab === 'settings' && (
+              <div className="space-y-4">
+                {editing ? (
+                  <>
+                    <div><label className="text-xs font-semibold text-muted-foreground font-orbitron block mb-1">NAME</label>
+                    <input value={editValues.name || ''} onChange={e => setEditValues({...editValues, name: e.target.value})} className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+                    <div><label className="text-xs font-semibold text-muted-foreground font-orbitron block mb-1">ROLE</label>
+                    <input value={editValues.role || ''} onChange={e => setEditValues({...editValues, role: e.target.value})} className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm focus:border-primary focus:outline-none" /></div>
+                    <div className="flex gap-2">
+                      <button onClick={saveEdit} className="px-4 py-2 bg-primary text-background font-semibold rounded-lg text-sm">Save Changes</button>
+                      <button onClick={() => setEditing(false)} className="px-4 py-2 bg-muted font-semibold rounded-lg text-sm">Cancel</button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="space-y-3">
+                    {([['Name', selected.name], ['Role', selected.role], ['Type', selected.type], ['Status', selected.status], ['Created', new Date(selected.createdAt).toLocaleDateString()]] as [string, string][]).map(([k, v]) => (
+                      <div key={k} className="flex justify-between py-2 border-b border-border/20">
+                        <span className="text-xs font-semibold text-muted-foreground font-orbitron">{k}</span>
+                        <span className="text-sm text-foreground">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            {activeTab === 'prompt' && (
+              <div>
+                <div className="flex justify-between mb-2">
+                  <p className="text-xs font-semibold text-muted-foreground font-orbitron">SYSTEM PROMPT</p>
+                  <button onClick={() => navigator.clipboard.writeText(selected.systemPrompt)} className="text-xs text-primary hover:underline">Copy</button>
+                </div>
+                {editing ? (
+                  <textarea value={editValues.systemPrompt || ''} onChange={e => setEditValues({...editValues, systemPrompt: e.target.value})} className="w-full bg-card border border-border rounded-lg px-3 py-2 text-sm font-mono h-64 resize-none focus:border-primary focus:outline-none" />
+                ) : (
+                  <div className="bg-card rounded-lg p-4 text-sm font-mono text-muted-foreground whitespace-pre-wrap">{selected.systemPrompt}</div>
+                )}
+              </div>
+            )}
+            {activeTab === 'analytics' && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {([['Total Runs', '—'], ['Avg Response', '< 2s'], ['Success Rate', '98.2%'], ['Memory Usage', '2.1 KB'], ['Uptime', `${Math.floor((Date.now() - selected.id) / 3600000)}h`], ['Σ-Matrix', 'Stable ✓']] as [string, string][]).map(([k, v]) => (
+                  <div key={k} className="bg-card rounded-xl p-4 border border-border/30">
+                    <p className="text-xs text-muted-foreground font-orbitron mb-1">{k}</p>
+                    <p className="text-lg font-bold text-foreground">{v}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-        
-        <Dialog open={isCreating} onOpenChange={setIsCreating}>
-          <DialogTrigger asChild>
-            <Button className="glow">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Agent
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="glass">
-            <DialogHeader>
-              <DialogTitle>Create New Agent</DialogTitle>
-            </DialogHeader>
-            <AgentForm onSubmit={createAgent} onCancel={() => setIsCreating(false)} />
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="glass p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Agents</p>
-              <p className="text-2xl font-bold">{agents?.length || 0}</p>
-            </div>
-            <Brain className="w-8 h-8 text-primary" />
-          </div>
-        </Card>
-        
-        <Card className="glass p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Active</p>
-              <p className="text-2xl font-bold text-green-400">
-                {agents?.filter(a => a.status === 'active').length || 0}
-              </p>
-            </div>
-            <Play className="w-8 h-8 text-green-400" />
-          </div>
-        </Card>
-        
-        <Card className="glass p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Interactions</p>
-              <p className="text-2xl font-bold">
-                {agents?.reduce((sum, agent) => sum + agent.interactions, 0) || 0}
-              </p>
-            </div>
-            <MessageCircle className="w-8 h-8 text-accent" />
-          </div>
-        </Card>
-        
-        <Card className="glass p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Deployments</p>
-              <p className="text-2xl font-bold">
-                {agents?.reduce((sum, agent) => sum + agent.deployments, 0) || 0}
-              </p>
-            </div>
-            <Globe className="w-8 h-8 text-secondary" />
-          </div>
-        </Card>
-      </div>
-
-      {/* Agent Grid */}
-      {!agents || agents.length === 0 ? (
-        <Card className="glass p-12 text-center">
-          <Brain className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-          <h3 className="text-xl font-semibold mb-2">No agents yet</h3>
-          <p className="text-muted-foreground mb-6">Create your first AI agent to get started</p>
-          <Button onClick={() => setIsCreating(true)} className="glow">
-            <Plus className="w-4 h-4 mr-2" />
-            Create Your First Agent
-          </Button>
-        </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {agents.map((agent) => {
-            const IconComponent = getAgentIcon(agent.type)
-            return (
-              <Card key={agent.id} className="glass p-6 hover:glow-secondary transition-all duration-300 cursor-pointer group">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-secondary/20 rounded-lg">
-                      <IconComponent className="w-6 h-6 text-secondary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{agent.name}</h3>
-                      <Badge className={`text-xs ${getStatusColor(agent.status)}`}>
-                        {agent.status}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedAgent(agent)
-                      }}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        toggleAgentStatus(agent)
-                      }}
-                    >
-                      {agent.status === 'active' ? (
-                        <Pause className="w-4 h-4" />
-                      ) : (
-                        <Play className="w-4 h-4" />
-                      )}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        duplicateAgent(agent)
-                      }}
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-                
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                  {agent.description}
-                </p>
-                
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{agent.interactions} interactions</span>
-                  <span>{new Date(agent.lastModified).toLocaleDateString()}</span>
-                </div>
-                
-                <div className="flex flex-wrap gap-1 mt-3">
-                  {(agent.tags || []).slice(0, 3).map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                  {(agent.tags || []).length > 3 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{(agent.tags || []).length - 3}
-                    </Badge>
-                  )}
-                </div>
-              </Card>
-            )
-          })}
+        <div className="flex-1 flex items-center justify-center text-muted-foreground">
+          <p>Select an agent to view details</p>
         </div>
       )}
     </div>
-  )
-}
-
-function AgentForm({ onSubmit, onCancel }: { 
-  onSubmit: (data: Partial<Agent>) => void
-  onCancel: () => void 
-}) {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    type: 'chatbot' as Agent['type'],
-    prompt: '',
-    tags: ''
-  })
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit({
-      ...formData,
-      tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean)
-    })
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="text-sm font-medium">Name</label>
-        <Input
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          placeholder="My AI Assistant"
-          required
-        />
-      </div>
-      
-      <div>
-        <label className="text-sm font-medium">Description</label>
-        <Textarea
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="What does this agent do?"
-          rows={3}
-        />
-      </div>
-      
-      <div>
-        <label className="text-sm font-medium">Type</label>
-        <select
-          value={formData.type}
-          onChange={(e) => setFormData({ ...formData, type: e.target.value as Agent['type'] })}
-          className="w-full px-3 py-2 bg-input border border-border rounded-md"
-        >
-          <option value="chatbot">Chatbot</option>
-          <option value="assistant">Assistant</option>
-          <option value="analyzer">Analyzer</option>
-          <option value="automation">Automation</option>
-        </select>
-      </div>
-      
-      <div>
-        <label className="text-sm font-medium">System Prompt</label>
-        <Textarea
-          value={formData.prompt}
-          onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
-          placeholder="You are a helpful AI assistant..."
-          rows={3}
-        />
-      </div>
-      
-      <div>
-        <label className="text-sm font-medium">Tags (comma-separated)</label>
-        <Input
-          value={formData.tags}
-          onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-          placeholder="customer-service, automation, chat"
-        />
-      </div>
-      
-      <div className="flex gap-2 pt-4">
-        <Button type="submit" className="flex-1 glow">
-          Create Agent
-        </Button>
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancel
-        </Button>
-      </div>
-    </form>
-  )
-}
-
-function AgentEditor({ agent, onUpdate, onBack }: {
-  agent: Agent
-  onUpdate: (agent: Agent) => void
-  onBack: () => void
-}) {
-  const [editedAgent, setEditedAgent] = useState(agent)
-  const [activeTab, setActiveTab] = useState('settings')
-
-  const handleSave = () => {
-    onUpdate(editedAgent)
-  }
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={onBack}>
-            ← Back
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">{agent.name}</h1>
-            <p className="text-muted-foreground">Agent Editor</p>
-          </div>
-        </div>
-        
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Eye className="w-4 h-4 mr-2" />
-            Preview
-          </Button>
-          <Button onClick={handleSave} className="glow">
-            Save Changes
-          </Button>
-        </div>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="settings">Settings</TabsTrigger>
-          <TabsTrigger value="prompt">Prompt</TabsTrigger>
-          <TabsTrigger value="code">Code</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="settings" className="space-y-6">
-          <Card className="glass p-6">
-            <h3 className="text-lg font-semibold mb-4">Basic Settings</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Name</label>
-                <Input
-                  value={editedAgent.name}
-                  onChange={(e) => setEditedAgent({ ...editedAgent, name: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Type</label>
-                <select
-                  value={editedAgent.type}
-                  onChange={(e) => setEditedAgent({ ...editedAgent, type: e.target.value as Agent['type'] })}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-md"
-                >
-                  <option value="chatbot">Chatbot</option>
-                  <option value="assistant">Assistant</option>
-                  <option value="analyzer">Analyzer</option>
-                  <option value="automation">Automation</option>
-                </select>
-              </div>
-              <div className="md:col-span-2">
-                <label className="text-sm font-medium">Description</label>
-                <Textarea
-                  value={editedAgent.description}
-                  onChange={(e) => setEditedAgent({ ...editedAgent, description: e.target.value })}
-                  rows={3}
-                />
-              </div>
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="prompt" className="space-y-6">
-          <Card className="glass p-6">
-            <h3 className="text-lg font-semibold mb-4">System Prompt</h3>
-            <Textarea
-              value={editedAgent.prompt || ''}
-              onChange={(e) => setEditedAgent({ ...editedAgent, prompt: e.target.value })}
-              rows={15}
-              placeholder="You are a helpful AI assistant..."
-              className="font-mono"
-            />
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="code" className="space-y-6">
-          <Card className="glass p-6">
-            <h3 className="text-lg font-semibold mb-4">Custom Code</h3>
-            <Textarea
-              value={editedAgent.code || ''}
-              onChange={(e) => setEditedAgent({ ...editedAgent, code: e.target.value })}
-              rows={15}
-              placeholder="// Custom JavaScript code for your agent"
-              className="font-mono"
-            />
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="glass p-6">
-              <h3 className="text-lg font-semibold mb-2">Interactions</h3>
-              <p className="text-3xl font-bold text-primary">{agent.interactions}</p>
-              <p className="text-sm text-muted-foreground">Total conversations</p>
-            </Card>
-            <Card className="glass p-6">
-              <h3 className="text-lg font-semibold mb-2">Deployments</h3>
-              <p className="text-3xl font-bold text-accent">{agent.deployments}</p>
-              <p className="text-sm text-muted-foreground">Active instances</p>
-            </Card>
-            <Card className="glass p-6">
-              <h3 className="text-lg font-semibold mb-2">Uptime</h3>
-              <p className="text-3xl font-bold text-green-400">99.9%</p>
-              <p className="text-sm text-muted-foreground">Last 30 days</p>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
-}
+  );
+};

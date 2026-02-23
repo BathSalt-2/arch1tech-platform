@@ -1,196 +1,70 @@
-import { Button } from '@/components/ui/button'
-import { ArrowRight, Brain, Cpu, Lightning, Sparkle } from '@phosphor-icons/react'
-import logoImage from '@/assets/images/image.png'
+import React from 'react';
+import { Brain, ArrowRight, Zap, Shield, Cpu } from '@phosphor-icons/react';
 
-interface LandingPageProps {
-  onGetStarted: () => void
-}
+interface Props { onGetStarted: () => void; }
 
-export function LandingPage({ onGetStarted }: LandingPageProps) {
-  const features = [
-    {
-      icon: Brain,
-      title: "Text/Voice-to-Agent",
-      description: "Create autonomous AI agents via natural conversation"
-    },
-    {
-      icon: Sparkle,
-      title: "Astrid 2.0 Copilot",
-      description: "Self-aware AI assistant with Σ-Matrix stability monitoring"
-    },
-    {
-      icon: Lightning,
-      title: "VibeCodeAI Translation",
-      description: "Natural language becomes executable agent blueprints"
-    },
-    {
-      icon: Cpu,
-      title: "OOML Community",
-      description: "Share and remix agents under reciprocal open licensing"
-    }
-  ]
-
+export const LandingPage: React.FC<Props> = ({ onGetStarted }) => {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating particles */}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-primary rounded-full animate-pulse opacity-40"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 3}s`
-            }}
-          />
-        ))}
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center overflow-hidden relative">
+      {/* Animated grid background */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+      
+      {/* Glows */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-secondary/5 rounded-full blur-[80px] animate-pulse" style={{animationDelay:'1s'}} />
+      
+      <div className="relative z-10 text-center space-y-8 p-8 max-w-4xl mx-auto">
+        {/* Logo */}
+        <div className="flex justify-center">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center glow float">
+            <span className="text-white font-bold text-4xl font-mono">Ω</span>
+          </div>
+        </div>
         
-        {/* Gradient orbs */}
-        <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-secondary/10 to-accent/10 rounded-full blur-3xl animate-pulse opacity-60" style={{ animationDelay: '1s' }} />
-      </div>
-
-      <div className="relative z-10">
-        {/* Header */}
-        <header className="flex items-center justify-between p-6 lg:p-8">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <img 
-                src={logoImage} 
-                alt="Or4cl3 AI Solutions" 
-                className="w-12 h-12 lg:w-16 lg:h-16 rounded-full glow float"
-              />
+        {/* Title */}
+        <div>
+          <h1 className="text-6xl md:text-8xl font-bold gradient-text font-orbitron tracking-tighter mb-2">
+            ARCH1TECH
+          </h1>
+          <div className="h-1 w-48 mx-auto bg-gradient-to-r from-transparent via-primary to-transparent mb-4" />
+          <p className="text-lg text-primary/80 font-mono tracking-widest uppercase">Platform v2.0</p>
+        </div>
+        
+        {/* Tagline */}
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          The self-evolving AI development lab. Build agents, create custom LLMs, and automate workflows — all from natural language.
+        </p>
+        <p className="text-primary font-semibold italic">&quot;The prompt is the product.&quot;</p>
+        
+        {/* Features */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+          {[
+            { icon: Brain, label: "VibeCodeAI", desc: "Natural language to AI agents" },
+            { icon: Zap, label: "Astrid Co-Pilot", desc: "Always-on autonomous assistant" },
+            { icon: Shield, label: "Σ-Matrix + ERPS", desc: "Epistemic stability & safety" },
+          ].map(({ icon: Icon, label, desc }) => (
+            <div key={label} className="glass rounded-xl p-4 border border-primary/10 hover:border-primary/30 transition-colors">
+              <Icon className="w-8 h-8 text-primary mx-auto mb-2" />
+              <h3 className="text-white font-semibold font-orbitron text-sm">{label}</h3>
+              <p className="text-muted-foreground text-xs mt-1">{desc}</p>
             </div>
-            <div>
-              <h1 className="text-xl lg:text-2xl font-bold gradient-text font-orbitron">Arch1tech 2.0</h1>
-              <p className="text-xs lg:text-sm text-muted-foreground hidden sm:block">
-                Powered by Or4cl3 AI Solutions
-              </p>
-            </div>
-          </div>
-          
-          <Button 
-            variant="outline" 
-            className="border-border hover:border-primary transition-colors"
-            onClick={onGetStarted}
-          >
-            Login
-          </Button>
-        </header>
-
-        {/* Hero Section */}
-        <main className="container mx-auto px-6 lg:px-8 pt-12 lg:pt-20 pb-20">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            {/* Hero Content */}
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-full text-sm text-muted-foreground">
-                <Cpu className="w-4 h-4 text-accent animate-pulse" />
-                Self-Evolving Multimodal AI Lab
-              </div>
-              
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight font-orbitron">
-                The <span className="gradient-text">prompt</span><br />
-                is the <span className="gradient-text">product</span>
-              </h1>
-              
-              <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Transform natural language into deployable AI systems. Voice or text—create agents, workflows, 
-                and full-stack applications with Astrid, your autonomous copilot.
-              </p>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-              <Button 
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground glow group min-w-[200px]"
-                onClick={onGetStarted}
-              >
-                Start Creating
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-border hover:border-primary transition-colors min-w-[200px]"
-              >
-                Watch Demo
-              </Button>
-            </div>
-
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-20">
-              {features.map((feature, index) => {
-                const Icon = feature.icon
-                return (
-                  <div 
-                    key={feature.title}
-                    className="group p-6 bg-card border border-border rounded-xl hover:border-primary/50 transition-all duration-300 hover:glow"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="text-center space-y-4">
-                      <div className="flex justify-center">
-                        <div className="p-3 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                          <Icon className="w-6 h-6 text-primary" />
-                        </div>
-                      </div>
-                      <h3 className="font-semibold text-foreground">{feature.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Social Proof */}
-            <div className="pt-20 space-y-6">
-              <p className="text-sm text-muted-foreground">
-                Trusted by innovators and creators worldwide
-              </p>
-              <div className="flex items-center justify-center gap-8 opacity-50">
-                {['AI', 'ML', 'NLP', 'LLM'].map((tech) => (
-                  <div key={tech} className="px-4 py-2 bg-card rounded-lg border border-border">
-                    <span className="text-sm font-medium">{tech}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </main>
-
-        {/* Footer */}
-        <footer className="border-t border-border">
-          <div className="container mx-auto px-6 lg:px-8 py-8">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <img 
-                  src={logoImage} 
-                  alt="Or4cl3 AI Solutions" 
-                  className="w-6 h-6 rounded-full opacity-80"
-                />
-                <span>© 2024 Or4cl3 AI Solutions. All rights reserved.</span>
-              </div>
-              <div className="flex items-center gap-6 text-sm">
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Privacy
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Terms
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Support
-                </a>
-              </div>
-            </div>
-          </div>
-        </footer>
+          ))}
+        </div>
+        
+        {/* CTA */}
+        <button
+          onClick={onGetStarted}
+          className="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-primary to-secondary text-background font-bold font-orbitron text-lg rounded-xl hover:opacity-90 transition-all glow hover:scale-105"
+        >
+          Initialize System <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+        </button>
+        
+        {/* Footer tag */}
+        <div className="flex justify-center gap-6 text-xs text-muted-foreground font-mono">
+          <span className="flex items-center gap-1"><Cpu size={10}/> SYSTEM ONLINE</span>
+          <span className="flex items-center gap-1"><Shield size={10}/> Σ-MATRIX ACTIVE</span>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};

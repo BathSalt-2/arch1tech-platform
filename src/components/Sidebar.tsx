@@ -1,122 +1,69 @@
-import { Button } from '@/components/ui/button'
+import React from 'react';
 import { 
-  House, 
-  Brain, 
-  ShoppingBag, 
-  Gear, 
-  Users,
-  ChartLine,
-  Code,
-  Question,
-  List,
-  X
-} from '@phosphor-icons/react'
+  CommandPalette, Robot, Storefront, ChevronLeft, ChevronRight 
+} from '@phosphor-icons/react';
 
-interface SidebarProps {
-  collapsed: boolean
-  onToggle: () => void
-  activeView: string
-  onViewChange: (view: string) => void
+interface Props {
+  collapsed: boolean;
+  onToggle: () => void;
+  activeView: string;
+  onViewChange: (view: string) => void;
 }
 
-const navigation = [
-  { id: 'command-center', label: 'Command Center', icon: House },
-  { id: 'agent-workspace', label: 'Agent Workspace', icon: Brain },
-  { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag },
-  { id: 'analytics', label: 'Analytics', icon: ChartLine },
-  { id: 'integrations', label: 'Integrations', icon: Code },
-  { id: 'team', label: 'Team', icon: Users },
-]
+const navItems = [
+  { id: 'command-center', icon: CommandPalette, label: 'Command Center' },
+  { id: 'agent-workspace', icon: Robot, label: 'Agent Workspace' },
+  { id: 'marketplace', icon: Storefront, label: 'Marketplace' },
+];
 
-const secondaryItems = [
-  { id: 'settings', label: 'Settings', icon: Gear },
-  { id: 'help', label: 'Help', icon: Question },
-]
-
-export function Sidebar({ collapsed, onToggle, activeView, onViewChange }: SidebarProps) {
+export const Sidebar: React.FC<Props> = ({ collapsed, onToggle, activeView, onViewChange }) => {
   return (
-    <>
-      {/* Mobile overlay */}
-      {!collapsed && (
-        <div 
-          className="fixed inset-0 bg-black/50 lg:hidden z-20"
-          onClick={onToggle}
-        />
-      )}
-      
-      <div className={`fixed left-0 top-0 h-full bg-card border-r border-border transition-all duration-300 z-30 ${
-        collapsed ? 'w-16 lg:w-16' : 'w-64'
-      } ${collapsed ? '' : 'lg:relative'}`}>
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="h-16 flex items-center justify-between px-4 border-b border-border">
-            {!collapsed && (
-              <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Brain className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-lg">Arch1tech</span>
+    <aside className={`hidden lg:flex flex-col h-screen glass border-r border-border/50 transition-all duration-300 z-30 ${collapsed ? 'w-16' : 'w-64'}`}>
+      {/* Logo */}
+      <div className="h-16 flex items-center justify-between px-4 border-b border-border/30">
+        {!collapsed && (
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center">
+              <span className="text-white font-bold text-sm font-mono">Ω</span>
             </div>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggle}
-            className="w-8 h-8 p-0 hover:bg-muted"
-          >
-            {collapsed ? <List className="w-4 h-4" /> : <X className="w-4 h-4" />}
-          </Button>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
-          {navigation.map((item) => {
-            const IconComponent = item.icon
-            const isActive = activeView === item.id
-            
-            return (
-              <Button
-                key={item.id}
-                variant="ghost"
-                onClick={() => onViewChange(item.id)}
-                className={`w-full justify-start gap-3 h-12 transition-all duration-200 ${
-                  isActive 
-                    ? 'bg-primary text-primary-foreground glow' 
-                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
-                } ${collapsed ? 'px-3' : 'px-4'}`}
-              >
-                <IconComponent className="w-5 h-5 flex-shrink-0" />
-                {!collapsed && <span className="truncate">{item.label}</span>}
-              </Button>
-            )
-          })}
-        </nav>
-
-        {/* Secondary Items */}
-        <div className="p-4 border-t border-border space-y-2">
-          {secondaryItems.map((item) => {
-            const IconComponent = item.icon
-            const isActive = activeView === item.id
-            
-            return (
-              <Button
-                key={item.id}
-                variant="ghost"
-                onClick={() => onViewChange(item.id)}
-                className={`w-full justify-start gap-3 h-10 transition-all duration-200 ${
-                  isActive 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
-                } ${collapsed ? 'px-3' : 'px-4'}`}
-              >
-                <IconComponent className="w-4 h-4 flex-shrink-0" />
-                {!collapsed && <span className="truncate text-sm">{item.label}</span>}
-              </Button>
-            )
-          })}
-        </div>
+            <span className="font-bold gradient-text font-orbitron text-sm">ARCH1TECH</span>
+          </div>
+        )}
+        <button
+          onClick={onToggle}
+          className="p-1.5 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground ml-auto"
+        >
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
       </div>
-    </div>
-    </>
-  )
-}
+      
+      {/* Nav */}
+      <nav className="flex-1 p-2 space-y-1">
+        {navItems.map(({ id, icon: Icon, label }) => (
+          <button
+            key={id}
+            onClick={() => onViewChange(id)}
+            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all text-sm font-medium ${
+              activeView === id
+                ? 'bg-primary/10 text-primary border-glow'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <Icon size={20} className="flex-shrink-0" />
+            {!collapsed && <span>{label}</span>}
+          </button>
+        ))}
+      </nav>
+      
+      {/* Footer */}
+      {!collapsed && (
+        <div className="p-4 border-t border-border/30 text-xs text-muted-foreground font-mono">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span>Σ-Matrix: Stable</span>
+          </div>
+        </div>
+      )}
+    </aside>
+  );
+};
