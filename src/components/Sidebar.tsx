@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  CommandPalette, Robot, Storefront, ChevronLeft, ChevronRight 
+  Robot, Storefront, CaretLeft, CaretRight, FlowArrow, Cpu 
 } from '@phosphor-icons/react';
 
 interface Props {
@@ -11,8 +11,9 @@ interface Props {
 }
 
 const navItems = [
-  { id: 'command-center', icon: CommandPalette, label: 'Command Center' },
+  { id: 'command-center', icon: Cpu, label: 'Command Center' },
   { id: 'agent-workspace', icon: Robot, label: 'Agent Workspace' },
+  { id: 'workflow-builder', icon: FlowArrow, label: 'Workflow Builder' },
   { id: 'marketplace', icon: Storefront, label: 'Marketplace' },
 ];
 
@@ -33,7 +34,7 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggle, activeView, onVi
           onClick={onToggle}
           className="p-1.5 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground ml-auto"
         >
-          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {collapsed ? <CaretRight size={16} /> : <CaretLeft size={16} />}
         </button>
       </div>
       

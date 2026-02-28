@@ -57,15 +57,24 @@ _By Or4cl3 AI Solutions_
 - DVC versioning
 - Model card generation
 
-### 3️⃣ Text/Voice-to-Workflow
+### 3️⃣ Text/Voice-to-Workflow ✅
 **Functionality**: Orchestrate complex AI pipelines  
 **Purpose**: Automate multi-step processes with conditional logic  
+**Trigger**: Natural language workflow description or blank canvas creation  
+**Progression**: Describe workflow → AI generates nodes & connections → Edit & configure → Activate → Execute  
+**Success Criteria**: 85%+ successful workflow generation, clear visual representation  
 **Features**:
-- Trigger conditions
-- Prompt chaining
-- Conditional logic
-- Integration with agents/LLMs
-- Visual workflow designer
+- **Text-to-Workflow Generation**: Natural language → complete workflow with nodes and connections
+- **Multiple Node Types**: Trigger, Action, Condition, LLM Call, Agent, Delay, Webhook
+- **Visual Node Editor**: List-based workflow visualization with node cards
+- **Node Configuration**: JSON-based config editing for each node
+- **Workflow Management**: Create, edit, duplicate, delete, run workflows
+- **Status Control**: Active, paused, or draft workflows
+- **Run Tracking**: Execution count and last run timestamps
+- **Conditional Logic**: Branch nodes for if/then logic flows
+- **Agent Integration**: Call existing agents within workflows
+- **LLM Integration**: Execute prompts at any workflow step
+- **Groq API Powered**: Uses Groq's Llama 3.3 for workflow generation
 
 ### 4️⃣ Text/Voice-to-App (Planned)
 **Functionality**: Generate complete, deployable applications  
@@ -132,7 +141,7 @@ Astrid is the central nervous system, capable of running tasks in the background
 | Feature | Description | Status |
 | :--- | :--- | :--- |
 | **Voice-to-X Creation** | Speak commands to Astrid for hands-free development | ✅ Integrated |
-| **Visual Workflow Canvas** | Touch-based interface for designing pipelines | 🔜 Planned |
+| **Visual Workflow Canvas** | Touch-based interface for designing pipelines | ✅ Active |
 | **Real-time Collaboration** | Multi-user sessions with shared Astrid interactions | 🔜 Planned |
 | **AR Model Visualization** | Preview AI architectures in 3D space on mobile | 🔜 Future |
 | **Community Marketplace** | Share, discover, monetize agents under OOML | ✅ Active |
@@ -420,6 +429,20 @@ Astrid is the central nervous system, capable of running tasks in the background
 - Σ-Matrix + ERPS integration
 **Success Criteria**: 3x faster development with Astrid active
 
+### 7. Workflow Builder ✅
+**Functionality**: Visual workflow orchestration with AI generation  
+**Purpose**: Create and manage complex multi-step AI pipelines  
+**Features**:
+- Text-to-workflow natural language generation
+- Blank canvas workflow creation
+- Multiple node types (Trigger, Action, Condition, LLM, Agent, Delay)
+- Node configuration with JSON editing
+- Workflow execution and tracking
+- Status management (active, paused, draft)
+- Workflow duplication and management
+- Integration with existing agents
+**Success Criteria**: 80%+ successful workflow generations, <3 min creation time
+
 ---
 
 ## 🚀 User Flows
@@ -491,10 +514,13 @@ Astrid is the central nervous system, capable of running tasks in the background
 
 ## 🛠️ Roadmap
 
-### Current Release (v2.0) ✅
+### Current Release (v2.1) ✅
 - Command Center with quick and advanced creation
 - Agent Workspace with full CRUD
 - Agent Marketplace with community sharing
+- **Workflow Builder with text-to-workflow generation**
+- **Complete workflow orchestration system**
+- **Conditional logic and trigger support**
 - Astrid 2.0 with Σ-Matrix + ERPS
 - Voice input integration
 - Mobile-optimized responsive design
@@ -502,12 +528,12 @@ Astrid is the central nervous system, capable of running tasks in the background
 - Glassmorphic cyberpunk UI
 
 ### Q3 2025
-- Visual Workflow Canvas
-- Text-to-Workflow module
+- Enhanced visual workflow canvas (drag-and-drop)
+- Workflow templates library
 - Real-time collaboration
 - Advanced analytics dashboard
 - Drift monitoring tools
-- API access for agents
+- API access for agents and workflows
 
 ### Q4 2025
 - Text-to-LLM module

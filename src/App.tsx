@@ -4,6 +4,7 @@ import { CommandCenter } from './components/CommandCenter'
 import { Sidebar } from './components/Sidebar'
 import { AgentWorkspace } from './components/AgentWorkspace'
 import { AgentMarketplace } from './components/AgentMarketplace'
+import { WorkflowBuilder } from './components/WorkflowBuilder'
 import { AstridPanel } from './components/AstridPanel'
 import { LandingPage } from './components/LandingPage'
 import { LoadingScreen } from './components/LoadingScreen'
@@ -111,6 +112,7 @@ function App() {
             <div className="flex-1 p-4 lg:p-6">
               {activeView === 'command-center' && <CommandCenter />}
               {activeView === 'agent-workspace' && <AgentWorkspace />}
+              {activeView === 'workflow-builder' && <WorkflowBuilder />}
               {activeView === 'marketplace' && <AgentMarketplace />}
             </div>
             
