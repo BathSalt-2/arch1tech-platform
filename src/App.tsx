@@ -9,9 +9,12 @@ import { AstridPanel } from './components/AstridPanel'
 import { LandingPage } from './components/LandingPage'
 import { LoadingScreen } from './components/LoadingScreen'
 import { Cpu, Brain, Sparkle, List } from '@phosphor-icons/react'
+import SkillsLibraryTab from './SkillsLibraryTab';
+import SyntheticDataForgeTab from './SyntheticDataForgeTab';
 
 function App() {
   const [hasVisited, setHasVisited] = useKV('arch1tech-has-visited', 'false')
+  const [activeTab, setActiveTab] = useState('main');
   const [isLoading, setIsLoading] = useState(false)
   const [activeView, setActiveView] = useKV('arch1tech-active-view', 'command-center')
   const [astridActive, setAstridActive] = useKV('arch1tech-astrid-active', 'false')
@@ -38,6 +41,33 @@ function App() {
 
   // Main dashboard for returning users
   return (
+    <>
+      {/* Tab Navigation */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', borderBottom: '1px solid #333', paddingBottom: '10px' }}>
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              padding: '10px 20px',
+              background: activeTab === tab.id ? '#0066cc' : '#1a1a1a',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: activeTab === tab.id ? 'bold' : 'normal'
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {activeTab === 'skills' && <SkillsLibraryTab onActivateSkill={(name, desc) => console.log(`Activated: ${name}`)} />}
+      {activeTab === 'sdg' && <SyntheticDataForgeTab />}
+      {activeTab !== 'skills' && activeTab !== 'sdg' && (
+      
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
